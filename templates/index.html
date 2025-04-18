@@ -1,0 +1,106 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero text-center text-white">
+    <div class="container">
+        <h1 class="display-4 mb-4">Discover Your Next Whisky</h1>
+        <p class="lead mb-4">Get personalized whisky recommendations based on your BAXUS collection.</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card bg-dark shadow">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4">Enter Your BAXUS Username</h2>
+                    
+                    <form id="usernameForm" action="{{ url_for('analyze') }}" method="post" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="username" class="form-label">BAXUS Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Enter your BAXUS username" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid BAXUS username.
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                We'll analyze your bottle collection to provide personalized recommendations.
+                            </small>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search me-2"></i> Analyze My Collection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Example Username Card -->
+            <div class="card bg-dark mt-4 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Don't have a username?</h5>
+                    <p class="card-text">Try using this example username: <strong>carriebaxus</strong></p>
+                    <form action="{{ url_for('analyze') }}" method="post">
+                        <input type="hidden" name="username" value="carriebaxus">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-flask me-2"></i> Try with Example
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- How It Works Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">How It Works</h2>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-dark h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-database fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Connect Your Collection</h5>
+                    <p class="card-text">We analyze your BAXUS bar to understand your preferences and tastes.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-dark h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-brain fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Smart Analysis</h5>
+                    <p class="card-text">Our algorithm identifies patterns in your whisky preferences, including regions, styles, and price points.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-dark h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-glass-whiskey fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Personalized Recommendations</h5>
+                    <p class="card-text">Get curated whisky suggestions that match your taste profile and diversify your collection.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+/* Custom styles to enhance Bootstrap theme */
+
+/* Profile card styling */
+.profile-card {
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Recommendation card styling */
+.recommendation-card {
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease-in-out;
+    height: 100%;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.recommendation-img {
+    height: 200px;
+    object-fit: contain;
+    padding: 1rem;
+}
+
+.reasoning-badge {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Loading spinner */
+.loader {
+    border: 5px solid var(--bs-secondary);
+    border-top: 5px solid var(--bs-primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Hero section */
+.hero {
+    padding: 4rem 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1601751818941-571144562ff8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1486&q=80');
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 2rem;
+}
+
+/* Stats cards */
+.stat-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    height: 100%;
+}
+
+/* Bottle details */
+.bottle-detail {
+    margin-bottom: 0.25rem;
+}
+
+.bottle-price {
+    font-weight: bold;
+    color: var(--bs-success);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+    
+    .recommendation-img {
+        height: 150px;
+    }
+}
