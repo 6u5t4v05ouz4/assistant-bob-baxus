@@ -67,9 +67,12 @@ def preprocess_whisky_data(data):
         data['age'] = pd.to_numeric(data['age'], errors='coerce')
     
     # Fill missing values
-    data['price'].fillna(0, inplace=True)
-    data['proof'].fillna(0, inplace=True)
-    data['age'].fillna(0, inplace=True)
+    if 'price' in data.columns:
+        data['price'] = data['price'].fillna(0)
+    if 'proof' in data.columns:
+        data['proof'] = data['proof'].fillna(0)
+    if 'age' in data.columns:
+        data['age'] = data['age'].fillna(0)
     
     # Generate unique IDs if missing
     if 'id' not in data.columns or data['id'].isna().any():

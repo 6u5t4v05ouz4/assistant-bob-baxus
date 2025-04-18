@@ -15,15 +15,27 @@ class WhiskyRecommender:
     
     def preprocess_data(self):
         """Prepare whisky data for recommendations"""
+        # Ensure essential columns exist
+        essential_columns = ['name', 'brand', 'spirit', 'price', 'proof', 'region']
+        for col in essential_columns:
+            if col not in self.whisky_data.columns:
+                logger.warning(f"Missing column: {col}, adding it with default values")
+                self.whisky_data[col] = 'Unknown' if col not in ['price', 'proof', 'age'] else 0
+                
+        # Add age column if not present
+        if 'age' not in self.whisky_data.columns:
+            logger.warning("Missing column: age, adding it with default values")
+            self.whisky_data['age'] = 0
+                
         # Ensure numeric columns are properly formatted
         self.whisky_data['price'] = pd.to_numeric(self.whisky_data['price'], errors='coerce')
         self.whisky_data['proof'] = pd.to_numeric(self.whisky_data['proof'], errors='coerce')
         self.whisky_data['age'] = pd.to_numeric(self.whisky_data['age'], errors='coerce')
         
         # Fill missing values
-        self.whisky_data['price'].fillna(self.whisky_data['price'].median(), inplace=True)
-        self.whisky_data['proof'].fillna(self.whisky_data['proof'].median(), inplace=True)
-        self.whisky_data['age'].fillna(0, inplace=True)  # 0 for NAS (No Age Statement)
+        self.whisky_data['price'] = self.whisky_data['price'].fillna(self.whisky_data['price'].median() if not self.whisky_data['price'].empty else 0)
+        self.whisky_data['proof'] = self.whisky_data['proof'].fillna(self.whisky_data['proof'].median() if not self.whisky_data['proof'].empty else 0)
+        self.whisky_data['age'] = self.whisky_data['age'].fillna(0)  # 0 for NAS (No Age Statement)
         
         # Extract features for similarity calculation
         self.feature_columns = ['price', 'proof', 'age']
