@@ -7,6 +7,28 @@ A web application for personalized whisky recommendations based on your BAXUS co
 - Smart recommendations for similar and complementary bottles
 - Visual dashboard with carousels and insights
 
+## LLM API Key e Endpoint
+
+Para utilizar recursos de IA (LLM), é necessário informar:
+- **LLM_API_KEY:** sua chave de API do provedor escolhido (Groq, OpenAI, etc)
+- **LLM_API_URL:** o endpoint do serviço LLM desejado
+
+Essas informações devem ser configuradas no arquivo `.env` (veja o exemplo em `.env.example`).
+
+### Exemplo para Groq
+```
+LLM_API_KEY=sua-chave-groq
+LLM_API_URL=https://api.groq.com/openai/v1/chat/completions
+```
+
+### Exemplo para OpenAI
+```
+LLM_API_KEY=sua-chave-openai
+LLM_API_URL=https://api.openai.com/v1/chat/completions
+```
+
+Você pode utilizar qualquer provedor compatível, bastando ajustar esses valores.
+
 ## Installation
 
 ### Requirements
