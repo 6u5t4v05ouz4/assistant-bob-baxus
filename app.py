@@ -98,13 +98,19 @@ def analyze():
 
 @app.route('/recommendations')
 def recommendations():
-    if 'username' not in session or 'similar_recommendations' not in session:
-        flash('Please enter a username first', 'warning')
+    username = session.get('username')
+    if (
+        not username or
+        username.strip() == '' or
+        username.lower() in ['bob', 'test', 'default', 'none']
+        or 'similar_recommendations' not in session
+    ):
+        flash('Please enter a valid username first.', 'warning')
         return redirect(url_for('index'))
-    
+
     return render_template(
         'recommendations.html',
-        username=session['username'],
+        username=username,
         user_profile=session['user_profile'],
         similar_recommendations=session['similar_recommendations'],
         complementary_recommendations=session['complementary_recommendations'],
