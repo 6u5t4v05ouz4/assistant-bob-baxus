@@ -59,20 +59,35 @@ def preprocess_whisky_data(data):
     # Convert numeric columns
     if 'price' in data.columns:
         data['price'] = pd.to_numeric(data['price'], errors='coerce')
-    
     if 'proof' in data.columns:
         data['proof'] = pd.to_numeric(data['proof'], errors='coerce')
-    
     if 'age' in data.columns:
         data['age'] = pd.to_numeric(data['age'], errors='coerce')
-    
-    # Fill missing values
+    # Preencher 'spirit' com alternativas se disponível
+    if 'spirit' in data.columns:
+        # Preencher spirit com o primeiro valor válido entre spirit, category, type
+        def fill_spirit(row):
+            for col in ['spirit', 'spirit_type', 'category', 'type']:
+                val = row.get(col, None)
+                if pd.notna(val) and str(val).strip() != '' and str(val).strip().lower() != 'none':
+                    return val
+            return 'Unknown'
+        data['spirit'] = data.apply(fill_spirit, axis=1)
+
+    # Preencher preço e proof com alternativas se disponível
     if 'price' in data.columns:
-        data['price'] = data['price'].fillna(0)
+        for alt in ['average_msrp', 'fair_price', 'shelf_price']:
+            if alt in data.columns:
+                mask = (data['price'].isna()) | (data['price'] == 0)
+                data.loc[mask, 'price'] = data.loc[mask, alt]
+        data.loc[data['price'].isna(), 'price'] = 0
     if 'proof' in data.columns:
-        data['proof'] = data['proof'].fillna(0)
+        if 'abv' in data.columns:
+            mask = (data['proof'].isna()) | (data['proof'] == 0)
+            data.loc[mask, 'proof'] = data.loc[mask, 'abv'] * 2
+        data.loc[data['proof'].isna(), 'proof'] = 0
     if 'age' in data.columns:
-        data['age'] = data['age'].fillna(0)
+        data.loc[data['age'].isna(), 'age'] = 0
     
     # Generate unique IDs if missing
     if 'id' not in data.columns or data['id'].isna().any():

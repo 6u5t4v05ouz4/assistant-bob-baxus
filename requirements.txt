@@ -1,0 +1,7 @@
+flask
+flask-session
+pandas
+numpy
+scikit-learn
+jinja2
+requests

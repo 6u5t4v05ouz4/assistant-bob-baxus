@@ -92,7 +92,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const barStatsElement = document.getElementById('barStatsData');
     if (barStatsElement) {
         const barStats = JSON.parse(barStatsElement.textContent);
-        initializeCharts(barStats);
+        if (barStats.spirit_types) {
+            createSpiritChart(barStats.spirit_types);
+        }
+        if (barStats.brands_count) {
+            createBrandChart(barStats.brands_count);
+        }
+        if (barStats.price_distribution) {
+            createPriceChart(barStats.price_distribution);
+        }
     }
     
     // Setup view toggle buttons

@@ -28,6 +28,19 @@ if whisky_data is not None:
     whisky_recommender = WhiskyRecommender(whisky_data)
     logger.info("Whisky recommender initialized")
 
+# Função utilitária para converter numpy types para tipos nativos Python
+import numpy as np
+
+def convert_numpy(obj):
+    if isinstance(obj, dict):
+        return {k: convert_numpy(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_numpy(i) for i in obj]
+    elif isinstance(obj, np.generic):
+        return obj.item()
+    else:
+        return obj
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -61,11 +74,17 @@ def analyze():
         if whisky_recommender is not None:
             user_profile, similar_recs, complementary_recs, bar_stats = whisky_recommender.get_recommendations(bar_data)
             
-            # Store recommendations in session
-            session['user_profile'] = user_profile
-            session['similar_recommendations'] = similar_recs
-            session['complementary_recommendations'] = complementary_recs
-            session['bar_stats'] = bar_stats
+            # Ensure user_profile has required keys
+            user_profile = user_profile or {}
+            user_profile.setdefault('avg_price', 0)
+            user_profile.setdefault('min_price', 0)
+            user_profile.setdefault('max_price', 0)
+            
+            # Converte todos os resultados para tipos nativos Python antes de salvar na sessão
+            session['user_profile'] = convert_numpy(user_profile)
+            session['similar_recommendations'] = convert_numpy(similar_recs)
+            session['complementary_recommendations'] = convert_numpy(complementary_recs)
+            session['bar_stats'] = convert_numpy(bar_stats)
             
             return redirect(url_for('recommendations'))
         else:

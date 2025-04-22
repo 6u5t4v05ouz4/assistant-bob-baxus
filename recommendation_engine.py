@@ -7,6 +7,30 @@ import logging
 logger = logging.getLogger(__name__)
 
 class WhiskyRecommender:
+    def _get_price_from_master(self, bottle_id):
+        try:
+            if 'id' in self.whisky_data.columns:
+                bottle_id_str = str(bottle_id)
+                ids_str = self.whisky_data['id'].astype(str)
+                row = self.whisky_data[ids_str == bottle_id_str]
+                logger.warning(f"Buscando preço para id {bottle_id_str}. Encontrei linhas: {row.shape[0]}")
+                if not row.empty:
+                    val = row.iloc[0]['price']
+                    # Se price for válido (>0), retorna
+                    if not pd.isna(val) and float(val) > 0:
+                        logger.warning(f"Preço encontrado na base mestre para id {bottle_id_str}: {val}")
+                        return float(val)
+                    # Se price for 0 ou NaN, tenta outros campos
+                    for alt_field in ['average_msrp', 'fair_price', 'shelf_price']:
+                        if alt_field in row.columns:
+                            alt_val = row.iloc[0][alt_field]
+                            if not pd.isna(alt_val) and float(alt_val) > 0:
+                                logger.warning(f"Usando {alt_field} para id {bottle_id_str}: {alt_val}")
+                                return float(alt_val)
+        except Exception as e:
+            logger.warning(f"Erro ao buscar preço para id {bottle_id}: {e}")
+        return None
+
     def __init__(self, whisky_data):
         """Initialize the recommender with whisky dataset"""
         self.whisky_data = whisky_data
@@ -74,6 +98,8 @@ class WhiskyRecommender:
         - bar_stats: Statistics about user's collection
         """
         try:
+            # DEBUG: Log bar_data recebido
+            logger.warning(f"bar_data recebido: {bar_data}")
             # Extract bottle info from bar data
             user_bottles = []
             for item in bar_data:
@@ -84,13 +110,14 @@ class WhiskyRecommender:
                         'name': bottle.get('name', 'Unknown'),
                         'brand': bottle.get('brand', 'Unknown'),
                         'spirit': bottle.get('spirit', 'Unknown'),
-                        'price': bottle.get('price'),
+                        'price': bottle.get('price') if bottle.get('price') is not None else self._get_price_from_master(bottle.get('id')),
                         'proof': bottle.get('proof'),
                         'region': bottle.get('region', 'Unknown'),
                         'age': bottle.get('age'),
                         'image_url': bottle.get('image_url')
                     })
             
+            logger.warning(f"user_bottles extraído: {user_bottles}")
             if not user_bottles:
                 logger.warning("No valid bottles found in user bar data")
                 return {}, [], [], {}
@@ -98,6 +125,10 @@ class WhiskyRecommender:
             # Create DataFrame of user bottles
             user_df = pd.DataFrame(user_bottles)
             
+            # Corrige valores None para 0 em campos numéricos
+            for col in ['price', 'proof', 'age']:
+                if col in user_df.columns:
+                    user_df[col] = user_df[col].fillna(0)
             # Analyze user preferences
             user_profile = self.analyze_user_preferences(user_df)
             
@@ -118,14 +149,20 @@ class WhiskyRecommender:
     
     def analyze_user_preferences(self, user_df):
         """Extract user preferences from their bottle collection"""
-        user_profile = {}
+        user_profile = {'avg_price': 0, 'min_price': 0, 'max_price': 0}
         
         # Price preferences
         if 'price' in user_df.columns and not user_df['price'].empty:
-            price_stats = user_df['price'].describe()
-            user_profile['avg_price'] = price_stats.get('mean', 0)
-            user_profile['min_price'] = price_stats.get('min', 0)
-            user_profile['max_price'] = price_stats.get('max', 0)
+            prices = user_df['price']
+            prices_nonzero = prices[prices > 0]
+            price_stats = prices.describe()
+            import numpy as np
+            avg_price = price_stats.get('mean', 0)
+            min_price = prices_nonzero.min() if not prices_nonzero.empty else 0
+            max_price = price_stats.get('max', 0)
+            user_profile['avg_price'] = 0 if avg_price is None or (isinstance(avg_price, float) and np.isnan(avg_price)) else avg_price
+            user_profile['min_price'] = min_price
+            user_profile['max_price'] = 0 if max_price is None or (isinstance(max_price, float) and np.isnan(max_price)) else max_price
         else:
             user_profile['avg_price'] = 0
             user_profile['min_price'] = 0
@@ -145,6 +182,8 @@ class WhiskyRecommender:
         if 'brand' in user_df.columns:
             brand_counts = user_df['brand'].value_counts()
             user_profile['top_brands'] = brand_counts.head(3).to_dict()
+        else:
+            user_profile['top_brands'] = {}
         
         # Age preferences
         if 'age' in user_df.columns and not user_df['age'].empty:
@@ -162,12 +201,10 @@ class WhiskyRecommender:
         
         return user_profile
     
-    def find_similar_bottles(self, user_df, num_recommendations=5):
+    def find_similar_bottles(self, user_df, num_recommendations=5, user_profile=None):
         """Find bottles similar to user's collection"""
-        # Get IDs of bottles in user's collection
+        user_profile = user_profile or self.analyze_user_preferences(user_df)
         user_bottle_ids = set(user_df['id'].astype(str).tolist())
-        
-        # Create feature vectors for user bottles
         user_feature_vectors = []
         for _, bottle in user_df.iterrows():
             # Get similar features as in the whisky dataset
@@ -235,6 +272,8 @@ class WhiskyRecommender:
                 # Extract reasoning based on similarity to user's collection
                 reasoning = self.generate_similarity_reasoning(bottle, user_df)
                 
+                llm_message = self.generate_llm_message(bottle, user_profile)
+                
                 similar_bottles.append({
                     'id': bottle['id'],
                     'name': bottle['name'],
@@ -246,7 +285,8 @@ class WhiskyRecommender:
                     'proof': bottle['proof'],
                     'image_url': bottle.get('image_url', ''),
                     'similarity_score': similarity_scores[idx],
-                    'reasoning': reasoning
+                    'reasoning': reasoning,
+                    'llm_message': llm_message
                 })
             
             return similar_bottles
@@ -254,58 +294,33 @@ class WhiskyRecommender:
         return []
     
     def find_complementary_bottles(self, user_df, user_profile, num_recommendations=5):
-        """Find bottles that complement and diversify user's collection"""
-        # Get IDs of bottles in user's collection
         user_bottle_ids = set(user_df['id'].astype(str).tolist())
-        
-        # Extract user's preferences
         user_spirits = set(user_df['spirit'].unique())
         user_regions = set(user_df['region'].unique())
-        
-        # Find underrepresented categories in user's collection
         all_spirits = set(self.whisky_data['spirit'].unique())
         all_regions = set(self.whisky_data['region'].unique())
-        
         missing_spirits = all_spirits - user_spirits
         missing_regions = all_regions - user_regions
-        
-        # Prioritize bottles with characteristics not in user's collection
         complementary_score = []
-        
         for idx, bottle in self.whisky_data.iterrows():
             score = 0
             bottle_id = str(bottle['id'])
-            
-            # Skip bottles already in user's collection
             if bottle_id in user_bottle_ids:
                 continue
-            
-            # Boost score for spirits not in user's collection
             if bottle['spirit'] in missing_spirits:
                 score += 3
-            
-            # Boost score for regions not in user's collection
             if bottle.get('region') in missing_regions:
                 score += 2
-            
-            # Consider price range similar to user's collection
             avg_price = user_profile.get('avg_price', 0)
-            if abs(bottle['price'] - avg_price) < (avg_price * 0.3):  # Within 30% of average price
+            if abs(bottle['price'] - avg_price) < (avg_price * 0.3):
                 score += 1
-            
             complementary_score.append((idx, score))
-        
-        # Sort by complementary score (descending)
         complementary_score.sort(key=lambda x: x[1], reverse=True)
-        
-        # Get top N complementary bottles
         complementary_bottles = []
         for idx, score in complementary_score[:num_recommendations]:
             bottle = self.whisky_data.iloc[idx]
-            
-            # Generate reasoning for why this bottle complements their collection
             reasoning = self.generate_complementary_reasoning(bottle, user_df, user_profile)
-            
+            llm_message = self.generate_llm_message(bottle, user_profile)
             complementary_bottles.append({
                 'id': bottle['id'],
                 'name': bottle['name'],
@@ -317,11 +332,28 @@ class WhiskyRecommender:
                 'proof': bottle['proof'],
                 'image_url': bottle.get('image_url', ''),
                 'complementary_score': score,
-                'reasoning': reasoning
+                'reasoning': reasoning,
+                'llm_message': llm_message
             })
-        
         return complementary_bottles
     
+    def generate_llm_message(self, bottle, user_profile):
+        """
+        Gera uma mensagem personalizada usando LLM Groq.
+        """
+        from llm_utils import gerar_mensagem_llm
+        prompt = (
+            f"Usuário prefere {', '.join(user_profile.get('top_spirits', {}).keys()) or 'whisky'}, "
+            f"faixa de preço ${user_profile.get('avg_price', 'N/A')}. "
+            f"Garrafa sugerida: {bottle.get('name', 'Desconhecida')}, {bottle.get('spirit', '')}, "
+            f"${bottle.get('price', '')}, região {bottle.get('region', '')}. "
+            "Explique de forma amigável em uma frase por que ela é uma boa escolha para o usuário. Não mencione valores"
+        )
+        try:
+            return gerar_mensagem_llm(prompt)
+        except Exception as e:
+            return f"Sugestão baseada nos seus gostos e perfil. (Erro LLM: {e})"
+
     def generate_similarity_reasoning(self, rec_bottle, user_df):
         """Generate reasoning for why a bottle is similar to user's collection"""
         reasons = []
