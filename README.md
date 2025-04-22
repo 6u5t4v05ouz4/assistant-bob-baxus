@@ -58,4 +58,4 @@ WhiskyBob/
 MIT
 
 ---
-*Developed by [Your Name].*
+*Developed by Grottan City Lab.*
