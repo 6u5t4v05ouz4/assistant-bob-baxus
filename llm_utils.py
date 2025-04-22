@@ -4,15 +4,15 @@ from dotenv import load_dotenv
 
 def gerar_mensagem_llm(prompt, api_key=None):
     """
-    Envia um prompt para o Groq LLM e retorna uma mensagem personalizada.
+    Sends a prompt to the Groq LLM and returns a personalized message.
     """
     load_dotenv()
     api_key = api_key or os.environ.get("LLM_API_KEY")
     url = os.environ.get("LLM_API_URL", "https://api.groq.com/openai/v1/chat/completions")
     if not api_key:
-        raise ValueError("A variável de ambiente LLM_API_KEY não está definida. Configure no .env.")
+        raise ValueError("The environment variable LLM_API_KEY is not set. Please configure it in your .env file.")
     if not url:
-        raise ValueError("A variável de ambiente LLM_API_URL não está definida. Configure no .env.")
+        raise ValueError("The environment variable LLM_API_URL is not set. Please configure it in your .env file.")
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
