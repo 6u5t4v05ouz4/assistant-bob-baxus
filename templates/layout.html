@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
+    <!-- Fonte clássica para todo o site -->
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700&display=swap" rel="stylesheet">
+    <style>
+        body, .navbar, .hero-title, .lead, .form-label, .form-control, .card, .card-title, .card-text, .footer {
+            font-family: 'Merriweather', Georgia, serif !important;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assistant Bob Baxus | {% block title %}Home{% endblock %}</title>
@@ -28,7 +35,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <img src="{{ url_for('static', filename='img/baxus-icon.png') }}" alt="BAXUS" width="32" height="32" class="me-2">
-                <span>BAXUS Assistant</span>
+                <span class="navbar-brand mb-0 h1" style="font-family: 'Merriweather', Georgia, serif; font-weight: 700; color: #FFD700;">BOB - Assistant BAXUS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
