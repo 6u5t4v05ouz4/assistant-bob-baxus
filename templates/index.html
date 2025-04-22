@@ -4,10 +4,11 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero text-center text-white">
-    <div class="container">
-        <h1 class="display-4 mb-4">Discover Your Next Whisky</h1>
-        <p class="lead mb-4">Get personalized whisky recommendations based on your BAXUS collection.</p>
+<section class="hero text-center position-relative" style="min-height: 420px;">
+    <img src="{{ url_for('static', filename='img/img-1.jpg') }}" alt="BAXUS Visual" class="hero-bg position-absolute top-0 start-50 translate-middle-x w-100 h-100" style="object-fit: cover; object-position: center 65%; opacity: 0.45; z-index: 1; height: 430px; max-height: 100vh;">
+    <div class="container position-relative" style="z-index: 2;">
+        <h1 class="display-4 mb-4 hero-title" style="color: #FFD700; text-shadow: 2px 2px 8px #000, 0 0 16px #fff2; font-weight: 700;">Discover Your Next Whisky</h1>
+        <p class="lead mb-4" style="color: #fff; text-shadow: 1px 1px 6px #000;">Get personalized whisky recommendations based on your BAXUS collection.</p>
     </div>
 </section>
 
