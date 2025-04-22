@@ -102,10 +102,10 @@ def recommendations():
     if (
         not username or
         username.strip() == '' or
-        username.lower() in ['bob', 'test', 'default', 'none']
+        username.lower() in ['test', 'default', 'none']
         or 'similar_recommendations' not in session
     ):
-        flash('Please enter a valid username first.', 'warning')
+        flash('Please enter um usuário válido primeiro.', 'warning')
         return redirect(url_for('index'))
 
     return render_template(
