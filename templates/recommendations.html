@@ -44,9 +44,12 @@
                                   <div class="bottle-detail"><small><strong>Proof:</strong> {{ bottle.proof }}</small></div>
                                   <div class="bottle-price my-2">${{ "%.2f"|format(bottle.price|float) }}</div>
                                   <h6 class="mt-3">Why You'll Like It:</h6>
-                                  {% if bottle.llm_message %}
-                                  <div class="alert alert-primary p-2 my-2">{{ bottle.llm_message }}</div>
-                                  {% endif %}
+  <div class="llm-suggestion-box my-2">
+    <div class="llm-suggestion-inner">
+      <img src="{{ url_for('static', filename='img/agent.png') }}" alt="Agent AI" class="llm-agent-img" />
+      <span class="llm-suggestion-text">{{ bottle.llm_message }}</span>
+    </div>
+  </div>
                                 </div>
                               </div>
                             </div>
@@ -242,7 +245,12 @@
                                                 
                                                 <h6 class="mt-3">Why You'll Like It:</h6>
                                                 {% if bottle.llm_message %}
-                                                    <div class="alert alert-primary p-2 my-2">{{ bottle.llm_message }}</div>
+                                                    <div class="llm-suggestion-box my-2">
+  <div class="llm-suggestion-inner">
+    <img src="{{ url_for('static', filename='img/agent.png') }}" alt="Agent AI" class="llm-agent-img" />
+    <span class="llm-suggestion-text">{{ bottle.llm_message }}</span>
+  </div>
+</div>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -300,7 +308,12 @@
                                                 
                                                 <h6 class="mt-3">Why It Complements Your Collection:</h6>
                                                 {% if bottle.llm_message %}
-                                                    <div class="alert alert-primary p-2 my-2">{{ bottle.llm_message }}</div>
+                                                    <div class="llm-suggestion-box my-2">
+  <div class="llm-suggestion-inner">
+    <img src="{{ url_for('static', filename='img/agent.png') }}" alt="Agent AI" class="llm-agent-img" />
+    <span class="llm-suggestion-text">{{ bottle.llm_message }}</span>
+  </div>
+</div>
                                                 {% endif %}
                                             </div>
                                         </div>
