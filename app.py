@@ -66,13 +66,18 @@ def analyze():
         
         # Store bar data in session
         bar_data = response.json()
+        logger.warning(f"Raw BAXUS API response for user {username}: {bar_data}")
         if not bar_data:
             flash('No bottles found in your BAXUS collection', 'warning')
             return redirect(url_for('index'))
-        
+
         # Generate recommendations
         if whisky_recommender is not None:
             user_profile, similar_recs, complementary_recs, bar_stats = whisky_recommender.get_recommendations(bar_data)
+            logger.warning(f"Extracted user_profile: {user_profile}")
+            logger.warning(f"Similar recommendations: {similar_recs}")
+            logger.warning(f"Complementary recommendations: {complementary_recs}")
+            logger.warning(f"Bar stats: {bar_stats}")
             
             # Ensure user_profile has required keys
             user_profile = user_profile or {}
@@ -80,7 +85,7 @@ def analyze():
             user_profile.setdefault('min_price', 0)
             user_profile.setdefault('max_price', 0)
             
-            # Converte todos os resultados para tipos nativos Python antes de salvar na sessão
+            # Convert all results to native Python types before saving to session
             session['user_profile'] = convert_numpy(user_profile)
             session['similar_recommendations'] = convert_numpy(similar_recs)
             session['complementary_recommendations'] = convert_numpy(complementary_recs)

@@ -341,7 +341,7 @@ class WhiskyRecommender:
         """
         Gera uma mensagem personalizada usando LLM Groq.
         """
-        from llm_utils import gerar_mensagem_llm
+        from llm_utils import generate_llm_message
         prompt = (
             f"Usuário prefere {', '.join(user_profile.get('top_spirits', {}).keys()) or 'whisky'}, "
             f"faixa de preço ${user_profile.get('avg_price', 'N/A')}. "
@@ -350,7 +350,7 @@ class WhiskyRecommender:
             "Explique de forma amigável em uma frase por que ela é uma boa escolha para o usuário. Não mencione valores"
         )
         try:
-            return gerar_mensagem_llm(prompt)
+            return generate_llm_message(prompt)
         except Exception as e:
             return f"Sugestão baseada nos seus gostos e perfil. (Erro LLM: {e})"
 
