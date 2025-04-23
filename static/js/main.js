@@ -76,6 +76,12 @@ function initTooltips() {
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Ativa o carrossel para trocar slides automaticamente a cada 5 segundos
+    var carouselEl = document.getElementById('recommendationCarousel');
+    if (carouselEl && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+        var carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl, { interval: 5000, ride: 'carousel' });
+    }
+
     // Setup form validation
     setupFormValidation();
     

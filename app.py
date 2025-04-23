@@ -105,7 +105,7 @@ def recommendations():
         username.lower() in ['test', 'default', 'none']
         or 'similar_recommendations' not in session
     ):
-        flash('Please enter um usuário válido primeiro.', 'warning')
+        flash('Please enter a valid username first.', 'warning')
         return redirect(url_for('index'))
 
     return render_template(

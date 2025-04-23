@@ -2,7 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 
-def gerar_mensagem_llm(prompt, api_key=None):
+def generate_llm_message(prompt, api_key=None):
     """
     Sends a prompt to the Groq LLM and returns a personalized message.
     """
