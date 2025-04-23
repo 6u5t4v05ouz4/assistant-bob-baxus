@@ -63,13 +63,5 @@ The WhiskyBob recommendation system uses user preference analysis and similarity
 
 ---
 
-## 6. Future Extensions
-
-- Support for advanced filters (price, region, etc.)
-- Adjustment of algorithm parameters via the interface
-- User feedback to improve suggestions
-
----
-
 ### Contributing
 Suggestions and improvements are welcome. See the code in `recommendation_engine.py` for implementation details.
