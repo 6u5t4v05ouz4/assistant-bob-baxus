@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="home-bob.png" alt="Print da Home" width="600"/>
+</p>
+
 # Bob Assistant BAXUS
 
 A web application for personalized whisky recommendations based on your BAXUS collection.
