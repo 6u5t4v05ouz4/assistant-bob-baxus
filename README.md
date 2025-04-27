@@ -39,6 +39,18 @@ You can use any compatible provider by adjusting these values.
 - Python 3.8+
 - pip
 
+> **Important:**  
+> Before running the project, copy the `.env.example` file to `.env` and fill in the required variables.
+>
+> On Linux/macOS terminal:
+> ```sh
+> cp .env.example .env
+> ```
+> On Windows command prompt:
+> ```sh
+> copy .env.example .env
+> ```
+
 ### Setup
 1. **Clone the repository:**
    ```bash
