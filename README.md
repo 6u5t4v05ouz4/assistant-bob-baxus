@@ -4,6 +4,12 @@
   <img src="home-bob.png" alt="Print da Home" width="600"/>
 </p>
 
+<p align="center">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"/>
+  </a>
+</p>
+
 A web application for personalized whisky recommendations based on your BAXUS collection.
 
 ## Features
