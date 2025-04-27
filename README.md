@@ -13,60 +13,63 @@ A web application for personalized whisky recommendations based on your BAXUS co
 
 ## LLM API Key and Endpoint
 
-To use AI (LLM) features, you must provide:
-- **LLM_API_KEY:** Your API key from the chosen provider (Groq, OpenAI, etc)
-- **LLM_API_URL:** The endpoint URL of the desired LLM service
+To use the AI features, you must set up your LLM API credentials in a `.env` file.
 
-These variables should be set in the `.env` file (see the example in `.env.example`).
+**Required variables:**
+- `LLM_API_KEY`: Your API key from the provider (Groq, OpenAI, etc.)
+- `LLM_API_URL`: The endpoint URL for the chosen LLM service
 
-### Example for Groq
-```
+**How to configure:**
+1. Copy the example environment file:
+   - On Linux/macOS:
+     ```sh
+     cp .env.example .env
+     ```
+   - On Windows:
+     ```sh
+     copy .env.example .env
+     ```
+2. Open the new `.env` file and fill in your API credentials.
+
+**Example for Groq:**
+```env
 LLM_API_KEY=your-groq-key
 LLM_API_URL=https://api.groq.com/openai/v1/chat/completions
 ```
 
-### Example for OpenAI
-```
+**Example for OpenAI:**
+```env
 LLM_API_KEY=your-openai-key
 LLM_API_URL=https://api.openai.com/v1/chat/completions
 ```
 
-You can use any compatible provider by adjusting these values.
+---
 
-## Installation
+## Installation & Setup
 
 ### Requirements
-- Python 3.8+
+- Python 3.8 or higher
 - pip
 
-> **Important:**  
-> Before running the project, copy the `.env.example` file to `.env` and fill in the required variables.
->
-> On Linux/macOS terminal:
-> ```sh
-> cp .env.example .env
-> ```
-> On Windows command prompt:
-> ```sh
-> copy .env.example .env
-> ```
-
-### Setup
+### Step-by-step
 1. **Clone the repository:**
-   ```bash
+   ```sh
    git clone https://github.com/yourusername/assistant-bob-baxus.git
    cd assistant-bob-baxus
    ```
 2. **Install dependencies:**
-   ```bash
+   ```sh
    pip install -r requirements.txt
    ```
-3. **Run the application:**
-   ```bash
+3. **Configure environment variables:**
+   - Copy `.env.example` to `.env` (see instructions above)
+   - Fill in your API credentials in `.env`
+4. **Run the application:**
+   ```sh
    python app.py
    ```
-4. **Access in your browser:**
-   Open [http://localhost:5000](http://localhost:5000)
+5. **Open in your browser:**
+   Visit [http://localhost:5000](http://localhost:5000)
 
 ## Usage
 - Enter your BAXUS username to get personalized whisky recommendations.
